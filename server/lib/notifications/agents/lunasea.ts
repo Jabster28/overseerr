@@ -49,12 +49,10 @@ class LunaSeaAgent
     };
   }
 
-  public shouldSend(type: Notification): boolean {
-    if (
-      this.getSettings().enabled &&
-      this.getSettings().options.webhookUrl &&
-      hasNotificationType(type, this.getSettings().types)
-    ) {
+  public shouldSend(): boolean {
+    const settings = this.getSettings();
+
+    if (settings.enabled && settings.options.webhookUrl) {
       return true;
     }
 
@@ -65,6 +63,12 @@ class LunaSeaAgent
     type: Notification,
     payload: NotificationPayload
   ): Promise<boolean> {
+    const settings = this.getSettings();
+
+    if (!hasNotificationType(type, settings.types ?? 0)) {
+      return true;
+    }
+
     logger.debug('Sending LunaSea notification', {
       label: 'Notifications',
       type: Notification[type],
@@ -72,19 +76,19 @@ class LunaSeaAgent
     });
 
     try {
-      const { webhookUrl, profileName } = this.getSettings().options;
-
-      if (!webhookUrl) {
-        return false;
-      }
-
-      await axios.post(webhookUrl, this.buildPayload(type, payload), {
-        headers: {
-          Authorization: `Basic ${Buffer.from(`${profileName}:`).toString(
-            'base64'
-          )}`,
-        },
-      });
+      await axios.post(
+        settings.options.webhookUrl,
+        this.buildPayload(type, payload),
+        settings.options.profileName
+          ? {
+              headers: {
+                Authorization: `Basic ${Buffer.from(
+                  `${settings.options.profileName}:`
+                ).toString('base64')}`,
+              },
+            }
+          : undefined
+      );
 
       return true;
     } catch (e) {
@@ -93,7 +97,7 @@ class LunaSeaAgent
         type: Notification[type],
         subject: payload.subject,
         errorMessage: e.message,
-        response: e.response.data,
+        response: e.response?.data,
       });
 
       return false;
