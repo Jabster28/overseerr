@@ -210,6 +210,7 @@ class TelegramAgent
           errorMessage: e.message,
           response: e.response?.data,
         });
+
         return false;
       }
     }

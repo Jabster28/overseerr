@@ -233,8 +233,7 @@ const NotificationsPushover: React.FC = () => {
               </div>
             </div>
             <NotificationTypeSelector
-              disabled={!values.enabled}
-              currentTypes={values.types}
+              currentTypes={values.enabled ? values.types : 0}
               onUpdate={(newTypes) => {
                 setFieldValue('types', newTypes);
                 setFieldTouched('types');
