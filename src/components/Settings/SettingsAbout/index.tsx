@@ -7,6 +7,7 @@ import {
 } from '../../../../server/interfaces/api/settingsInterfaces';
 import globalMessages from '../../../i18n/globalMessages';
 import Error from '../../../pages/_error';
+import Alert from '../../Common/Alert';
 import Badge from '../../Common/Badge';
 import List from '../../Common/List';
 import LoadingSpinner from '../../Common/LoadingSpinner';
@@ -28,6 +29,8 @@ const messages = defineMessages({
   preferredmethod: 'Preferred',
   outofdate: 'Out of Date',
   uptodate: 'Up to Date',
+  runningDevelop:
+    'You are running the <code>develop</code> branch of Overseerr, which is only recommended for those contributing to development or assisting with bleeding-edge testing.',
 });
 
 const SettingsAbout: React.FC = () => {
@@ -56,6 +59,27 @@ const SettingsAbout: React.FC = () => {
       />
       <div className="section">
         <List title={intl.formatMessage(messages.overseerrinformation)}>
+          {data.version.startsWith('develop-') && (
+            <Alert
+              title={intl.formatMessage(messages.runningDevelop, {
+                code: function code(msg) {
+                  return <code className="bg-opacity-50">{msg}</code>;
+                },
+                GithubLink: function GithubLink(msg) {
+                  return (
+                    <a
+                      href="https://github.com/sct/overseerr"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-yellow-100 underline transition duration-300 hover:text-white"
+                    >
+                      {msg}
+                    </a>
+                  );
+                },
+              })}
+            />
+          )}
           <List.Item
             title={intl.formatMessage(messages.version)}
             className="truncate"
