@@ -30,3 +30,4 @@
 
 - [Reverse Proxy Examples](extending-overseerr/reverse-proxy-examples.md)
 - [Fail2ban Filter](extending-overseerr/fail2ban.md)
+- [Third-Party Integrations](extending-overseerr/third-party.md)
